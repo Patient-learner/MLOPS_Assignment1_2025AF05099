@@ -1,0 +1,136 @@
+{
+    "champion_model": "LogisticRegression",
+    "selection_metric": "5-fold Stratified CV ROC-AUC",
+    "champion_cv_score": 0.9045,
+    "metrics": {
+        "cv_roc_auc": 0.9045,
+        "accuracy": 0.8852,
+        "precision": 0.8387,
+        "recall": 0.9286,
+        "f1": 0.8814,
+        "roc_auc": 0.9686,
+        "params": {
+            "classifier__C": 1.0,
+            "classifier__penalty": "l2",
+            "classifier__solver": "liblinear"
+        }
+    },
+    "all_models_summary": {
+        "LogisticRegression": {
+            "best_params": {
+                "classifier__C": 1.0,
+                "classifier__penalty": "l2",
+                "classifier__solver": "liblinear"
+            },
+            "cv_roc_auc": 0.9045,
+            "test_accuracy": 0.8852,
+            "test_precision": 0.8387,
+            "test_recall": 0.9286,
+            "test_f1": 0.8814,
+            "test_roc_auc": 0.9686
+        },
+        "RandomForestClassifier": {
+            "best_params": {
+                "classifier__max_depth": 3,
+                "classifier__min_samples_split": 5,
+                "classifier__n_estimators": 100
+            },
+            "cv_roc_auc": 0.8997,
+            "test_accuracy": 0.8525,
+            "test_precision": 0.8519,
+            "test_recall": 0.8214,
+            "test_f1": 0.8364,
+            "test_roc_auc": 0.9416
+        },
+        "GradientBoostingClassifier": {
+            "best_params": {
+                "classifier__learning_rate": 0.01,
+                "classifier__max_depth": 3,
+                "classifier__n_estimators": 150,
+                "classifier__subsample": 0.8
+            },
+            "cv_roc_auc": 0.887,
+            "test_accuracy": 0.8689,
+            "test_precision": 0.8333,
+            "test_recall": 0.8929,
+            "test_f1": 0.8621,
+            "test_roc_auc": 0.9491
+        }
+    },
+    "param_grids": {
+        "LogisticRegression": {
+            "classifier__C": [
+                0.01,
+                0.1,
+                1.0,
+                5.0,
+                10.0
+            ],
+            "classifier__penalty": [
+                "l2"
+            ],
+            "classifier__solver": [
+                "lbfgs",
+                "liblinear"
+            ]
+        },
+        "RandomForestClassifier": {
+            "classifier__n_estimators": [
+                50,
+                100,
+                150
+            ],
+            "classifier__max_depth": [
+                3,
+                5,
+                8,
+                null
+            ],
+            "classifier__min_samples_split": [
+                2,
+                5
+            ]
+        },
+        "GradientBoostingClassifier": {
+            "classifier__n_estimators": [
+                50,
+                100,
+                150
+            ],
+            "classifier__learning_rate": [
+                0.01,
+                0.05,
+                0.1
+            ],
+            "classifier__max_depth": [
+                2,
+                3
+            ],
+            "classifier__subsample": [
+                0.8,
+                1.0
+            ]
+        }
+    },
+    "features": {
+        "numeric": [
+            "age",
+            "trestbps",
+            "chol",
+            "thalach",
+            "oldpeak"
+        ],
+        "categorical": [
+            "cp",
+            "restecg",
+            "slope",
+            "thal",
+            "ca"
+        ],
+        "binary": [
+            "sex",
+            "fbs",
+            "exang"
+        ]
+    }
+}
