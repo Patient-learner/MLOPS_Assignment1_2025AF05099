@@ -1,0 +1,78 @@
+name: MLOps Continuous Integration Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  lint-and-test:
+    name: Lint, Test & Model Verification
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11 Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Flake8 Code Linting
+        run: |
+          flake8 src/ tests/ main.py --max-line-length=125 --ignore=E402,W503,E501,W391
+
+      - name: Verify Data Preprocessing Pipeline
+        run: |
+          python src/data/preprocess.py
+
+      - name: Verify Model Training & Evaluation
+        run: |
+          python src/models/train.py
+
+      - name: Execute Automated Unit Tests (Pytest)
+        run: |
+          pytest -v --junitxml=test-reports/junit.xml tests/
+
+      - name: Compile Word Submission Report
+        run: |
+          python src/utils/generate_report.py
+
+      - name: Upload Test Report & Model Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mlops-artifacts
+          path: |
+            test-reports/
+            models/
+            artifacts/figures/
+            reports/
+
+  docker-build:
+    name: Docker Image Build Verification
+    needs: lint-and-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Serving Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: false
+          tags: heart-disease-api:latest

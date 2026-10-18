@@ -1,7 +1,8 @@
-version: "3.8"
-
 services:
   heart-disease-api:
+    build:
+      context: ..
+      dockerfile: Dockerfile
     image: heart-disease-api:v1
     container_name: heart-disease-api
     restart: unless-stopped

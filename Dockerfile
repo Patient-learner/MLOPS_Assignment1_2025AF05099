@@ -1,4 +1,4 @@
-# Multi-stage / lightweight production serving image
+# Lightweight single-stage production serving image
 FROM python:3.11-slim
 
 # Set environment variables

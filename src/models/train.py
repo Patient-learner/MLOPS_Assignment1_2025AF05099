@@ -32,6 +32,7 @@ from sklearn.preprocessing import OneHotEncoder, StandardScaler
 
 import mlflow
 import mlflow.sklearn
+from mlflow.models.signature import infer_signature
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../data/processed"))
 MODELS_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../models"))
@@ -250,7 +251,15 @@ def train_and_evaluate():
 
             mlflow.log_artifact(cm_plot_path)
             mlflow.log_artifact(roc_plot_path)
-            mlflow.sklearn.log_model(best_model, artifact_path="model")
+
+            # Log model with explicit signature and input example
+            signature = infer_signature(X_train, best_model.predict(X_train))
+            mlflow.sklearn.log_model(
+                best_model,
+                artifact_path="model",
+                signature=signature,
+                input_example=X_train.iloc[:2],
+            )
 
             # Select champion model based strictly on 5-Fold CV ROC-AUC (zero test-leakage)
             if cv_roc_auc > best_cv_score:
