@@ -2,7 +2,7 @@
     "champion_model": "LogisticRegression",
     "selection_metric": "5-fold Stratified CV ROC-AUC",
     "champion_cv_score": 0.9045,
-    "training_timestamp": "2026-10-19T11:10:49.110009+00:00",
+    "training_timestamp": "2026-10-19T12:11:56.778868+00:00",
     "metrics": {
         "cv_roc_auc": 0.9045,
         "accuracy": 0.8852,
@@ -32,16 +32,16 @@
         },
         "RandomForestClassifier": {
             "best_params": {
-                "classifier__max_depth": 3,
-                "classifier__min_samples_split": 5,
-                "classifier__n_estimators": 100
+                "classifier__max_depth": 8,
+                "classifier__min_samples_split": 2,
+                "classifier__n_estimators": 50
             },
-            "cv_roc_auc": 0.8997,
-            "test_accuracy": 0.8525,
-            "test_precision": 0.8519,
-            "test_recall": 0.8214,
-            "test_f1": 0.8364,
-            "test_roc_auc": 0.9416
+            "cv_roc_auc": 0.9006,
+            "test_accuracy": 0.9016,
+            "test_precision": 0.8667,
+            "test_recall": 0.9286,
+            "test_f1": 0.8966,
+            "test_roc_auc": 0.9481
         },
         "GradientBoostingClassifier": {
             "best_params": {
@@ -50,12 +50,12 @@
                 "classifier__n_estimators": 150,
                 "classifier__subsample": 0.8
             },
-            "cv_roc_auc": 0.887,
+            "cv_roc_auc": 0.886,
             "test_accuracy": 0.8689,
             "test_precision": 0.8333,
             "test_recall": 0.8929,
             "test_f1": 0.8621,
-            "test_roc_auc": 0.9491
+            "test_roc_auc": 0.9481
         }
     },
     "param_grids": {
