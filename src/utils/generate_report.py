@@ -196,11 +196,12 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     r_main_title.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
 
     # Metadata Summary Table
-    meta_table = doc.add_table(rows=6, cols=2)
+    meta_table = doc.add_table(rows=7, cols=2)
     meta_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     meta_rows = [
         ("BITS ID", "2025AF05099"),
         ("Public GitHub Repository", "https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099"),
+        ("Video Walkthrough", "https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/tree/main/video"),
         ("Lab VM Execution Path", "/home/s2025af05099/workspace/MLOPS_Assignment1_2025AF05099"),
         ("Dataset", "UCI Heart Disease (Cleveland Clinical Repository - 13 Features + 1 Target)"),
         ("Serving Architecture", "FastAPI + Docker (Non-Root) + Minikube K8s + Prometheus + Grafana"),
@@ -217,8 +218,8 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c0.paragraphs[0].runs[0].font.size = Pt(8.5)
         c1.paragraphs[0].runs[0].font.name = "Arial"
         c1.paragraphs[0].runs[0].font.size = Pt(8.5)
-        set_cell_margins(c0, 30, 30, 80, 80)
-        set_cell_margins(c1, 30, 30, 80, 80)
+        set_cell_margins(c0, 25, 25, 80, 80)
+        set_cell_margins(c1, 25, 25, 80, 80)
 
     add_heading_with_spacing(doc, "1. Executive Summary & System Architecture", level=1)
     p = doc.add_paragraph(

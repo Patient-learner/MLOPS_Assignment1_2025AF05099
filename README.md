@@ -2,6 +2,7 @@
 **Course:** AIMLCZG523 — Machine Learning Operations (MLOps)  
 **BITS ID:** 2025AF05099  
 **GitHub Repository:** [https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099)  
+**Video Walkthrough:** [Watch Video (video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)](video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)  
 
 ---
 
