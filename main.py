@@ -8,7 +8,6 @@ Orchestrates the entire machine learning lifecycle:
 2. Preprocessing & stratified split
 3. Exploratory Data Analysis (EDA) visualizations
 4. 3-Model training, hyperparameter tuning, & MLflow tracking
-5. Project Word report compilation
 """
 
 import argparse
@@ -25,7 +24,6 @@ from src.data.download_data import download_dataset
 from src.data.preprocess import split_and_save_data
 from src.data.eda import generate_eda_plots
 from src.models.train import train_and_evaluate
-from src.utils.generate_report import build_word_report
 
 
 def print_banner():
@@ -43,28 +41,23 @@ def run_pipeline(stage: str = "all"):
 
     # Stage 1: Data Acquisition
     if stage in ["all", "data"]:
-        print("\n[Step 1/5] Checking UCI Heart Disease Dataset...")
+        print("\n[Step 1/4] Checking UCI Heart Disease Dataset...")
         download_dataset()
 
     # Stage 2: Data Preprocessing & Splitting
     if stage in ["all", "data", "preprocess"]:
-        print("\n[Step 2/5] Cleaning Data & Performing Stratified 80/20 Split...")
+        print("\n[Step 2/4] Cleaning Data & Performing Stratified 80/20 Split...")
         split_and_save_data()
 
     # Stage 3: Exploratory Data Analysis Visualizations
     if stage in ["all", "eda"]:
-        print("\n[Step 3/5] Generating Publication-Quality EDA Visualizations...")
+        print("\n[Step 3/4] Generating Publication-Quality EDA Visualizations...")
         generate_eda_plots()
 
     # Stage 4: Model Training, Tuning, & MLflow Experiment Tracking
     if stage in ["all", "train"]:
-        print("\n[Step 4/5] Training 3 Candidate Models & Logging to MLflow...")
+        print("\n[Step 4/4] Training 3 Candidate Models & Logging to MLflow...")
         train_and_evaluate()
-
-    # Stage 5: Formal Word Report Compilation
-    if stage in ["all", "report"]:
-        print("\n[Step 5/5] Compiling Formal Word Document Submission Report...")
-        build_word_report()
 
     print("\n" + "=" * 65)
     print(" [✓] Pipeline Stage Execution Completed Successfully!")
@@ -77,7 +70,7 @@ def main():
     )
     parser.add_argument(
         "--stage",
-        choices=["all", "data", "preprocess", "eda", "train", "report"],
+        choices=["all", "data", "preprocess", "eda", "train"],
         default="all",
         help="Pipeline stage to execute (default: all)",
     )

@@ -2,7 +2,7 @@
 **Course:** AIMLCZG523 — Machine Learning Operations (MLOps)  
 **BITS ID:** 2025AF05099  
 **GitHub Repository:** [https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099)  
-**Video Walkthrough:** [Watch Video Demonstration](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/blob/main/Video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)  
+**Video Walkthrough:** [Watch Video (GitHub)](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/blob/main/Video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4) | [Google Drive Mirror](https://drive.google.com/file/d/1Qmn21gozExBuLlskj1MJOaYPLVJkMsJg/view?usp=share_link)  
 
 ---
 
@@ -73,6 +73,8 @@ MLOPS_Assignment1_2025AF05099/
 │   └── docker-compose.monitoring.yml # Local Prometheus + Grafana stack
 ├── artifacts/figures/             # EDA and model performance plots
 ├── models/                        # Serialized model and metadata
+├── reports/                       # Formal submission report (DOCX & PDF)
+├── Video/                         # MP4 video walkthrough demonstration
 ├── Dockerfile                     # Container definition
 ├── main.py                        # Python end-to-end pipeline orchestrator
 ├── requirements.txt               # Pinned dependencies
@@ -93,13 +95,14 @@ chmod +x run_local.sh
 ### 4.2 Python Pipeline Runner (`main.py`)
 Alternatively, if your environment is already active:
 ```bash
-# Run all stages (Data -> Preprocessing -> EDA -> Train -> Report)
+# Run all stages (Data -> Preprocessing -> EDA -> Train)
 python main.py
 
 # Or run specific stages
 python main.py --stage data
+python main.py --stage preprocess
+python main.py --stage eda
 python main.py --stage train
-python main.py --stage report
 ```
 
 ### 4.3 Manual Step-by-Step Execution
