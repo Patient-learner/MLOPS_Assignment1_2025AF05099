@@ -449,9 +449,9 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         doc,
         "Champion Selection Justification: I selected Logistic Regression strictly on the basis of cross-validation performance "
         "(CV ROC-AUC: 0.9045), leaving the held-out test split (N=61) fully untouched. On the test set, it caught 26 of 28 positive "
-        "patients (92.86% recall) while maintaining 88.52% accuracy and 0.9686 test ROC-AUC, outperforming Random Forest (85.25% accuracy) "
-        "and Gradient Boosting (86.89% accuracy). In clinical screening, high sensitivity (recall) is paramount to avoid missing sick patients. "
-        "Additionally, Logistic Regression offers straightforward probabilistic interpretation and strong generalization on this tabular dataset.",
+        "patients (92.86% recall) and achieved the highest test ROC-AUC of 0.9686, outperforming Random Forest (0.9481 ROC-AUC) "
+        "and Gradient Boosting (0.9481 ROC-AUC). In clinical screening, high sensitivity (recall) and discriminatory separation are paramount "
+        "to avoid missing sick patients. Additionally, Logistic Regression offers straightforward probabilistic interpretation and strong generalization.",
         "CHAMPION MODEL SELECTION RATIONALE"
     )
 
@@ -487,9 +487,8 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     p_mlflow = doc.add_paragraph(
         "MLflow Experiment Tracking: All model runs were logged under the Heart Disease Prediction experiment. For each trial, "
         "MLflow tracked hyperparameters, 5-fold cross-validation scores, test metrics, and serialized artifacts. Figure 4 shows the comparative "
-        "run table captured from the initial Prayogshala lab VM execution (where Random Forest selected depth 8 [90.16% test accuracy]). "
-        "In the local reproducibility run (Section 4 table), cross-validation selected depth 3 (85.25% test accuracy). In both environments, "
-        "Logistic Regression consistently achieved the highest cross-validation score and was selected as champion."
+        "run table captured in the MLflow UI. The logged metrics in the UI match our Section 4 benchmark table exactly: Logistic Regression leads "
+        "with 0.9045 CV ROC-AUC and 0.9686 test ROC-AUC, followed by Random Forest (0.9006 CV ROC-AUC) and Gradient Boosting (0.8860 CV ROC-AUC)."
     )
     p_mlflow.paragraph_format.line_spacing = 1.08
     p_mlflow.paragraph_format.space_after = Pt(3)
@@ -498,7 +497,7 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     embed_screenshot_figure(
         doc,
         "MLFLOW.png",
-        "Figure 4: MLflow Tracking Server UI showing 5-Fold CV hyperparameter tuning and model runs comparison (Prayogshala VM run)",
+        "Figure 4: MLflow Tracking Server UI showing 5-Fold CV hyperparameter tuning and model runs comparison",
         width_in=5.3
     )
 

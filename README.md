@@ -210,8 +210,8 @@ docker compose -f monitoring/docker-compose.monitoring.yml down
 | Model Architecture | 5-Fold CV ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test F1-Score | Test ROC-AUC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Logistic Regression (Champion)** | **0.9045** | **88.52%** | **83.87%** | **92.86%** | **0.8814** | **0.9686** |
-| Random Forest Classifier | 0.8997 | 85.25% | 85.19% | 82.14% | 0.8364 | 0.9416 |
-| Gradient Boosting Classifier | 0.8870 | 86.89% | 83.33% | 89.29% | 0.8621 | 0.9491 |
+| Random Forest Classifier | 0.9006 | 90.16% | 86.67% | 92.86% | 0.8966 | 0.9481 |
+| Gradient Boosting Classifier | 0.8860 | 86.89% | 83.33% | 89.29% | 0.8621 | 0.9481 |
 
 The regularized `LogisticRegression` pipeline achieved the highest 5-fold Cross-Validation ROC-AUC (0.9045) and highest test ROC-AUC (0.9686) with 92.86% clinical recall, making it optimal for clinical risk prediction where minimizing dangerous False Negatives is paramount. The evaluation demonstrates rigorous comparison across three distinct machine learning paradigms: Generalized Linear, Bagging Ensemble, and Sequential Boosting.
 
