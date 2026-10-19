@@ -451,7 +451,7 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         "(CV ROC-AUC: 0.9045), leaving the held-out test split (N=61) fully untouched. On the test set, it caught 26 of 28 positive "
         "patients (92.86% recall) while maintaining 88.52% accuracy and 0.9686 test ROC-AUC, outperforming Random Forest (85.25% accuracy) "
         "and Gradient Boosting (86.89% accuracy). In clinical screening, high sensitivity (recall) is paramount to avoid missing sick patients. "
-        "Logistic Regression also yields calibrated probabilities without overfitting.",
+        "Additionally, Logistic Regression offers straightforward probabilistic interpretation and strong generalization on this tabular dataset.",
         "CHAMPION MODEL SELECTION RATIONALE"
     )
 
@@ -485,18 +485,20 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         p_cap.paragraph_format.space_after = Pt(2)
 
     p_mlflow = doc.add_paragraph(
-        "MLflow Experiment Tracking: I structured all runs under the Heart Disease Prediction experiment. For each model trial, "
-        "MLflow logged hyperparameters (regularization C, solver, penalty), 5-fold cross-validation scores, test metrics (accuracy, precision, "
-        "recall, F1, ROC-AUC), serialized model binaries, and confusion matrix/ROC curve plots. Figure 4 shows the comparative run table in the MLflow UI."
+        "MLflow Experiment Tracking: All model runs were logged under the Heart Disease Prediction experiment. For each trial, "
+        "MLflow tracked hyperparameters, 5-fold cross-validation scores, test metrics, and serialized artifacts. Figure 4 shows the comparative "
+        "run table captured from the initial Prayogshala lab VM execution (where Random Forest selected depth 8 [90.16% test accuracy]). "
+        "In the local reproducibility run (Section 4 table), cross-validation selected depth 3 (85.25% test accuracy). In both environments, "
+        "Logistic Regression consistently achieved the highest cross-validation score and was selected as champion."
     )
-    p_mlflow.paragraph_format.line_spacing = 1.12
-    p_mlflow.paragraph_format.space_after = Pt(4)
+    p_mlflow.paragraph_format.line_spacing = 1.08
+    p_mlflow.paragraph_format.space_after = Pt(3)
 
     # MLflow Screenshot
     embed_screenshot_figure(
         doc,
         "MLFLOW.png",
-        "Figure 4: MLflow Tracking Server UI showing 5-Fold CV hyperparameter tuning and model runs comparison",
+        "Figure 4: MLflow Tracking Server UI showing 5-Fold CV hyperparameter tuning and model runs comparison (Prayogshala VM run)",
         width_in=5.3
     )
 
