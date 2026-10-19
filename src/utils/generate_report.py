@@ -525,9 +525,10 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     p_api_desc.paragraph_format.space_after = Pt(4)
 
     # FastAPI Swagger Screenshot
+    fastapi_img = "FastAPI.png" if os.path.exists(os.path.join(SCREENSHOTS_DIR, "FastAPI.png")) else "FastAPI_2.png"
     embed_screenshot_figure(
         doc,
-        "FastAPI_2.png",
+        fastapi_img,
         "Figure 5: FastAPI Swagger Documentation (/docs) demonstrating successful POST /predict execution and JSON response",
         width_in=5.2
     )
@@ -587,8 +588,13 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     c_ci1 = sc_table.cell(0, 0)
     c_ci2 = sc_table.cell(0, 1)
 
-    pyt_path = os.path.join(SCREENSHOTS_DIR, "pytets_Flake8.png")
-    gh_path = os.path.join(SCREENSHOTS_DIR, "Github_CI.png")
+    pyt_path = os.path.join(SCREENSHOTS_DIR, "PYtests_Flake8.png") if os.path.exists(
+        os.path.join(SCREENSHOTS_DIR, "PYtests_Flake8.png")
+    ) else os.path.join(SCREENSHOTS_DIR, "pytets_Flake8.png")
+
+    gh_path = os.path.join(SCREENSHOTS_DIR, "GIT_CI_all.png") if os.path.exists(
+        os.path.join(SCREENSHOTS_DIR, "GIT_CI_all.png")
+    ) else os.path.join(SCREENSHOTS_DIR, "Github_CI.png")
 
     if os.path.exists(pyt_path):
         p_c1 = c_ci1.paragraphs[0]
@@ -632,9 +638,12 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     p_k8s.paragraph_format.space_after = Pt(3)
 
     # Kubernetes Scaled Pods Screenshot
+    k8s_img = "Kubernet_scaled pods.png" if os.path.exists(
+        os.path.join(SCREENSHOTS_DIR, "Kubernet_scaled pods.png")
+    ) else "kubernetes sacled pods & service.png"
     embed_screenshot_figure(
         doc,
-        "kubernetes sacled pods & service.png",
+        k8s_img,
         "Figure 8: Minikube Kubernetes cluster deployment showing 4 ready replica pods and LoadBalancer service exposing NodePort 30080",
         width_in=5.2
     )
