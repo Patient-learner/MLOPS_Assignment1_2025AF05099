@@ -59,5 +59,3 @@ mlruns/
 # Large raw datasets or temp archives
 data/raw/*.zip
 data/raw/*.tar.gz
-
-VIDEO_WALKTHROUGH_SCRIPT.md

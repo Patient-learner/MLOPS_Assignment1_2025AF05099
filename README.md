@@ -2,7 +2,7 @@
 **Course:** AIMLCZG523 — Machine Learning Operations (MLOps)  
 **BITS ID:** 2025AF05099  
 **GitHub Repository:** [https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099)  
-**Video Walkthrough:** [Watch Video (video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)](video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)  
+**Video Walkthrough:** [Watch Video Demonstration](https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/blob/main/Video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4)  
 
 ---
 
@@ -158,6 +158,9 @@ curl -X POST http://localhost:8000/predict \
 
 # Test Metrics Endpoint
 curl http://localhost:8000/metrics
+
+# Stop and remove standalone container to free port 8000 and container name
+docker stop heart-disease-api && docker rm heart-disease-api
 ```
 
 #### Step 6: Deploy to Local Kubernetes
@@ -179,18 +182,26 @@ kubectl get svc heart-disease-service
 kubectl scale deployment heart-disease-api --replicas=4
 kubectl get pods -l app=heart-disease-api
 
-# Access Service locally (reliable across macOS, Linux, and Windows):
-kubectl port-forward svc/heart-disease-service 8000:8000
+# Access Service locally via port 8080 (avoids port 8000 conflicts):
+kubectl port-forward svc/heart-disease-service 8080:8000
+# Test in a separate terminal:
+curl http://localhost:8080/health
 # Alternatively on Linux/Prayogshala: minikube service heart-disease-service --url
 ```
 
 #### Step 7: Launch Monitoring Stack (Prometheus + Grafana)
 ```bash
+# Launch full stack (API, Prometheus, Grafana) via Docker Compose
 docker compose -f monitoring/docker-compose.monitoring.yml up -d
 ```
 - **Prometheus UI:** [http://localhost:9090](http://localhost:9090) (Scrapes `/metrics` every 5 seconds)
 - **Grafana UI:** [http://localhost:3000](http://localhost:3000) *(User: `admin` / Password: `admin`)*
 - *Note: Grafana is pre-provisioned with Prometheus as the default datasource and automatically loads the 'Heart Disease Classifier Production Dashboard' upon startup.*
+
+To shut down the monitoring stack:
+```bash
+docker compose -f monitoring/docker-compose.monitoring.yml down
+```
 
 ---
 
@@ -199,8 +210,8 @@ docker compose -f monitoring/docker-compose.monitoring.yml up -d
 | Model Architecture | 5-Fold CV ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test F1-Score | Test ROC-AUC |
 | :--- | :---: | :---: | :---: | :---: | :---: | :---: |
 | **Logistic Regression (Champion)** | **0.9045** | **88.52%** | **83.87%** | **92.86%** | **0.8814** | **0.9686** |
-| Random Forest Classifier | 0.9006 | 90.16% | 86.67% | 92.86% | 0.8966 | 0.9481 |
-| Gradient Boosting Classifier | 0.8860 | 86.89% | 83.33% | 89.29% | 0.8621 | 0.9481 |
+| Random Forest Classifier | 0.8997 | 85.25% | 85.19% | 82.14% | 0.8364 | 0.9416 |
+| Gradient Boosting Classifier | 0.8870 | 86.89% | 83.33% | 89.29% | 0.8621 | 0.9491 |
 
 The regularized `LogisticRegression` pipeline achieved the highest 5-fold Cross-Validation ROC-AUC (0.9045) and highest test ROC-AUC (0.9686) with 92.86% clinical recall, making it optimal for clinical risk prediction where minimizing dangerous False Negatives is paramount. The evaluation demonstrates rigorous comparison across three distinct machine learning paradigms: Generalized Linear, Bagging Ensemble, and Sequential Boosting.
 

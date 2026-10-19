@@ -283,10 +283,12 @@ def train_and_evaluate():
     joblib.dump(champion_model_pipeline, model_save_path)
 
     import json
+    from datetime import datetime, timezone
     metadata = {
         "champion_model": champion_model_name,
         "selection_metric": "5-fold Stratified CV ROC-AUC",
         "champion_cv_score": round(float(best_cv_score), 4),
+        "training_timestamp": datetime.now(timezone.utc).isoformat(),
         "metrics": champion_metrics,
         "all_models_summary": all_models_summary,
         "param_grids": {k: v["param_grid"] for k, v in models_config.items()},
@@ -294,6 +296,21 @@ def train_and_evaluate():
             "numeric": NUMERIC_FEATURES,
             "categorical": CATEGORICAL_FEATURES,
             "binary": BINARY_FEATURES,
+        },
+        "feature_expected_ranges": {
+            "age": [1, 120],
+            "trestbps": [50.0, 250.0],
+            "chol": [50.0, 600.0],
+            "thalach": [40.0, 250.0],
+            "oldpeak": [0.0, 10.0],
+            "sex": [0, 1],
+            "cp": [1, 2, 3, 4],
+            "fbs": [0, 1],
+            "restecg": [0, 1, 2],
+            "exang": [0, 1],
+            "slope": [1, 2, 3],
+            "ca": [0, 1, 2, 3],
+            "thal": [3, 6, 7],
         },
     }
     with open(metadata_save_path, "w") as f:

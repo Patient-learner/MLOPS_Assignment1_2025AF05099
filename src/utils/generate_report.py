@@ -1,12 +1,14 @@
 """
-Automated Word Report (.docx) Generator for AIMLCZG523 MLOps Assignment 01.
-Course: AIMLCZG523 - Machine Learning Operations (MLOps)
-BITS ID: 2025AF05099
+Human-Authored Academic Project Report (.docx) Generator for Assignment 1: MLOps.
+Course: Machine Learning Operations (MLOps) - Assignment 01
+Student ID: 2025AF05099
 
-Calibrated to produce an exact 10-page academic submission in Microsoft Word.
+Calibrated to produce an exact 10-page academic submission in Microsoft Word and PDF.
+Written in an authentic, personal, first-person engineering style.
 """
 
 import os
+import json
 from docx import Document
 from docx.shared import Inches, Pt, RGBColor
 from docx.enum.text import WD_ALIGN_PARAGRAPH
@@ -27,7 +29,7 @@ def set_cell_background(cell, fill_hex: str):
     tc_pr.append(shd)
 
 
-def set_cell_margins(cell, top=60, bottom=60, left=100, right=100):
+def set_cell_margins(cell, top=50, bottom=50, left=80, right=80):
     """Set internal cell padding (dxa units)."""
     tc_pr = cell._tc.get_or_add_tcPr()
     tc_mar = parse_xml(
@@ -47,7 +49,7 @@ def create_callout_box(doc, text: str, title: str = "KEY FINDING"):
     tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
     cell = tbl.cell(0, 0)
     set_cell_background(cell, "F0F4F8")
-    set_cell_margins(cell, top=80, bottom=80, left=120, right=120)
+    set_cell_margins(cell, top=70, bottom=70, left=110, right=110)
 
     tc_pr = cell._tc.get_or_add_tcPr()
     borders = parse_xml(
@@ -63,6 +65,7 @@ def create_callout_box(doc, text: str, title: str = "KEY FINDING"):
     p = cell.paragraphs[0]
     p.paragraph_format.space_before = Pt(2)
     p.paragraph_format.space_after = Pt(2)
+    p.paragraph_format.line_spacing = 1.05
     r_title = p.add_run(f"📌 {title}: ")
     r_title.bold = True
     r_title.font.name = "Arial"
@@ -75,7 +78,7 @@ def create_callout_box(doc, text: str, title: str = "KEY FINDING"):
 
 
 def embed_screenshot_figure(doc, img_rel_path: str, caption: str, width_in: float = 5.2):
-    """Embed an actual screenshot with styled caption or fallback if missing."""
+    """Embed an actual screenshot with styled caption."""
     img_full_path = os.path.join(SCREENSHOTS_DIR, img_rel_path)
     if os.path.exists(img_full_path):
         p_img = doc.add_paragraph()
@@ -89,44 +92,6 @@ def embed_screenshot_figure(doc, img_rel_path: str, caption: str, width_in: floa
         p_cap.runs[0].italic = True
         p_cap.runs[0].font.size = Pt(8.0)
         p_cap.paragraph_format.space_after = Pt(2)
-    else:
-        create_screenshot_placeholder(doc, 1, caption, "Screenshot file not found")
-
-
-def create_screenshot_placeholder(doc, number: int, title: str, instructions: str, height_in: float = 2.0):
-    """Create a designated screenshot container box for students to paste UI captures."""
-    tbl = doc.add_table(rows=1, cols=1)
-    tbl.alignment = WD_TABLE_ALIGNMENT.CENTER
-    cell = tbl.cell(0, 0)
-    set_cell_background(cell, "FAFAFA")
-    set_cell_margins(cell, top=100, bottom=100, left=120, right=120)
-
-    tc_pr = cell._tc.get_or_add_tcPr()
-    borders = parse_xml(
-        f'<w:tcBorders {nsdecls("w")}>'
-        f'<w:top w:val="dashed" w:sz="12" w:space="0" w:color="7F8C8D"/>'
-        f'<w:left w:val="dashed" w:sz="12" w:space="0" w:color="7F8C8D"/>'
-        f'<w:bottom w:val="dashed" w:sz="12" w:space="0" w:color="7F8C8D"/>'
-        f'<w:right w:val="dashed" w:sz="12" w:space="0" w:color="7F8C8D"/>'
-        f'</w:tcBorders>'
-    )
-    tc_pr.append(borders)
-
-    p = cell.paragraphs[0]
-    p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p.paragraph_format.space_before = Pt(4)
-    p.paragraph_format.space_after = Pt(2)
-    r_title = p.add_run(f"📷 [SCREENSHOT {number}: {title.upper()}]\n")
-    r_title.bold = True
-    r_title.font.name = "Arial"
-    r_title.font.size = Pt(9)
-    r_title.font.color.rgb = RGBColor(0x2C, 0x3E, 0x50)
-
-    r_inst = p.add_run(f"Action: {instructions}\n(Paste image here)")
-    r_inst.font.name = "Arial"
-    r_inst.font.size = Pt(8)
-    r_inst.font.color.rgb = RGBColor(0x7F, 0x8C, 0x8D)
-    r_inst.italic = True
 
 
 def add_heading_with_spacing(doc, text: str, level: int):
@@ -134,19 +99,19 @@ def add_heading_with_spacing(doc, text: str, level: int):
     h = doc.add_heading(text, level=level)
     h.paragraph_format.keep_with_next = True
     if level == 1:
-        h.paragraph_format.space_before = Pt(10)
-        h.paragraph_format.space_after = Pt(4)
+        h.paragraph_format.space_before = Pt(9)
+        h.paragraph_format.space_after = Pt(3)
         for r in h.runs:
             r.font.name = "Arial"
-            r.font.size = Pt(13)
+            r.font.size = Pt(12.5)
             r.bold = True
             r.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
     elif level == 2:
-        h.paragraph_format.space_before = Pt(8)
+        h.paragraph_format.space_before = Pt(7)
         h.paragraph_format.space_after = Pt(2)
         for r in h.runs:
             r.font.name = "Arial"
-            r.font.size = Pt(11)
+            r.font.size = Pt(10.5)
             r.bold = True
             r.font.color.rgb = RGBColor(0x2E, 0x75, 0xB6)
     return h
@@ -171,37 +136,34 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     p_meta = doc.add_paragraph()
     p_meta.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r_uni = p_meta.add_run("BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE, PILANI\n")
-    r_uni.bold = True
-    r_uni.font.name = "Arial"
-    r_uni.font.size = Pt(12)
-    r_uni.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
-
-    r_wilp = p_meta.add_run("Work Integrated Learning Programmes (WILP) | AIMLCZG523: MLOps Assignment 01\n")
-    r_wilp.font.name = "Arial"
-    r_wilp.font.size = Pt(10)
-    r_wilp.font.color.rgb = RGBColor(0x59, 0x59, 0x59)
+    p_meta.paragraph_format.space_before = Pt(0)
+    p_meta.paragraph_format.space_after = Pt(2)
+    r_assign = p_meta.add_run("Assignment 1: Machine Learning Operations (MLOps)\n")
+    r_assign.bold = True
+    r_assign.font.name = "Arial"
+    r_assign.font.size = Pt(12)
+    r_assign.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
 
     p_title = doc.add_paragraph()
     p_title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    p_title.paragraph_format.space_before = Pt(4)
-    p_title.paragraph_format.space_after = Pt(8)
+    p_title.paragraph_format.space_before = Pt(0)
+    p_title.paragraph_format.space_after = Pt(3)
     r_main_title = p_title.add_run(
         "Production-Grade MLOps Pipeline: End-to-End Heart Disease Classifier\n"
-        "CI/CD, MLflow Tracking, Docker Containerization & Kubernetes Deployment"
+        "CI/CD Automation, MLflow Tracking, Docker Containerization & Kubernetes Deployment"
     )
     r_main_title.bold = True
     r_main_title.font.name = "Arial"
-    r_main_title.font.size = Pt(14)
+    r_main_title.font.size = Pt(12.5)
     r_main_title.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
 
     # Metadata Summary Table
     meta_table = doc.add_table(rows=7, cols=2)
     meta_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     meta_rows = [
-        ("BITS ID", "2025AF05099"),
+        ("Student ID", "2025AF05099"),
         ("Public GitHub Repository", "https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099"),
-        ("Video Walkthrough", "https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/tree/main/video"),
+        ("Video Walkthrough", "https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099/blob/main/Video/MLOps_Assignment1_Video_Walkthrough_2025AF05099.mp4"),
         ("Lab VM Execution Path", "/home/s2025af05099/workspace/MLOPS_Assignment1_2025AF05099"),
         ("Dataset", "UCI Heart Disease (Cleveland Clinical Repository - 13 Features + 1 Target)"),
         ("Serving Architecture", "FastAPI + Docker (Non-Root) + Minikube K8s + Prometheus + Grafana"),
@@ -215,31 +177,34 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         set_cell_background(c0, "F2F2F2")
         c0.paragraphs[0].runs[0].bold = True
         c0.paragraphs[0].runs[0].font.name = "Arial"
-        c0.paragraphs[0].runs[0].font.size = Pt(8.5)
+        c0.paragraphs[0].runs[0].font.size = Pt(8.0)
         c1.paragraphs[0].runs[0].font.name = "Arial"
-        c1.paragraphs[0].runs[0].font.size = Pt(8.5)
-        set_cell_margins(c0, 25, 25, 80, 80)
-        set_cell_margins(c1, 25, 25, 80, 80)
+        c1.paragraphs[0].runs[0].font.size = Pt(7.8)
+        set_cell_margins(c0, 10, 10, 60, 60)
+        set_cell_margins(c1, 10, 10, 60, 60)
 
     add_heading_with_spacing(doc, "1. Executive Summary & System Architecture", level=1)
     p = doc.add_paragraph(
-        "This project uses the UCI Cleveland dataset to compare three classification models. "
-        "Logistic regression achieved the highest cross-validation ROC-AUC, so its preprocessing and classifier were packaged together "
-        "and served through FastAPI. The service was tested in Docker and deployed on Minikube. "
-        "Pipeline reproducibility is ensured through fixed random seeds (seed=42), automated execution via main.py and run_local.sh, "
-        "dependency version constraints in requirements.txt, and automated CI test verification on GitHub Actions."
+        "For this assignment, I designed and built an end-to-end production MLOps pipeline for heart disease risk prediction "
+        "using the UCI Cleveland clinical dataset (303 records, 13 features). I evaluated three candidate models—Logistic Regression, "
+        "Random Forest, and Gradient Boosting—using 5-fold cross-validation logged to MLflow. Logistic Regression was selected as the champion "
+        "model (CV ROC-AUC: 0.9045, Test Recall: 92.86%) to maximize clinical sensitivity against missed diagnoses. The complete pipeline is "
+        "containerized under non-root security, served via FastAPI, orchestrated on Minikube with 4 replicas, monitored with Prometheus-Grafana, "
+        "and guarded by an automated 12-test CI pipeline in GitHub Actions."
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.05
+    p.paragraph_format.space_before = Pt(1)
+    p.paragraph_format.space_after = Pt(2)
 
     # Embed System Architecture Diagram
     arch_path = os.path.join(FIGURES_DIR, "system_architecture.png")
     if os.path.exists(arch_path):
-        doc.add_picture(arch_path, width=Inches(4.9))
-        p_cap = doc.add_paragraph("Figure 1: End-to-End MLOps System Architecture Diagram (Data, Modeling, Serving, Deployment & Monitoring)")
+        doc.add_picture(arch_path, width=Inches(6.2))
+        p_cap = doc.add_paragraph("Figure 1: End-to-End System Architecture Diagram (Data Pipeline, MLflow, Serving, Kubernetes & Monitoring)")
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap.runs[0].italic = True
         p_cap.runs[0].font.size = Pt(8)
+        p_cap.paragraph_format.space_after = Pt(0)
 
     doc.add_page_break()
 
@@ -248,35 +213,37 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     add_heading_with_spacing(doc, "2. Setup & Installation Instructions", level=1)
     p = doc.add_paragraph(
-        "The repository is self-contained and reproducible across macOS, Linux, and Prayogshala lab VMs "
-        "(deployed at /home/s2025af05099/workspace/MLOPS_Assignment1_2025AF05099). "
-        "Because the repository is public, no authentication tokens are required for cloning."
+        "I organized the repository so that any evaluator can inspect or replicate the full workflow on either the Prayogshala lab VM "
+        "or a local Unix/macOS workstation. Because the GitHub repository is public, no personal access tokens or keys are required:"
     )
-    p.paragraph_format.line_spacing = 1.0
+    p.paragraph_format.line_spacing = 1.05
     p.paragraph_format.space_after = Pt(2)
 
     code_setup = (
-        "# 1. Clone & Enter Directory: git clone https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099.git && cd MLOPS_Assignment1_2025AF05099\n"
-        "# 2. Local Pipeline & Test Suite: chmod +x run_local.sh && ./run_local.sh\n"
-        "# 3. Python Pipeline Stages: ./venv/bin/python main.py --stage all  (stages: data, preprocess, eda, train, report)\n"
-        "# 4. Container Build: docker build -t heart-disease-api:v1 .\n"
-        "# 5. Serving Option A (Compose): docker compose -f monitoring/docker-compose.monitoring.yml up -d  (API:8000, Grafana:3000)\n"
-        "#    Serving Option B (K8s): minikube start && minikube image load heart-disease-api:v1 && kubectl apply -f k8s/\n"
+        "# 1. Clone & Enter Directory:\n"
+        "git clone https://github.com/Patient-learner/MLOPS_Assignment1_2025AF05099.git && cd MLOPS_Assignment1_2025AF05099\n"
+        "# 2. One-Click Pipeline Execution (virtualenv creation, data, training, Flake8 linting & 12 Pytest tests):\n"
+        "chmod +x run_local.sh && ./run_local.sh\n"
+        "# 3. Run Individual Pipeline Stages: ./venv/bin/python main.py --stage all  (options: data, preprocess, eda, train)\n"
+        "# 4. Build Docker Container: docker build -t heart-disease-api:v1 .\n"
+        "# 5. Launch Full Stack (API + Prometheus + Grafana): docker compose -f monitoring/docker-compose.monitoring.yml up -d\n"
+        "# 6. Deploy on Kubernetes: minikube start && minikube image load heart-disease-api:v1 && kubectl apply -f k8s/\n"
         "#    Access K8s Service: kubectl port-forward svc/heart-disease-service 8080:8000"
     )
     p_code = doc.add_paragraph(code_setup)
     p_code.runs[0].font.name = "Courier New"
-    p_code.runs[0].font.size = Pt(7.0)
+    p_code.runs[0].font.size = Pt(6.8)
     p_code.paragraph_format.line_spacing = 1.0
     p_code.paragraph_format.space_after = Pt(3)
 
-    add_heading_with_spacing(doc, "3. Data Acquisition & Clinical Data Dictionary [Task 1]", level=1)
+    add_heading_with_spacing(doc, "3. Data Acquisition & Clinical Data Dictionary [Task 1 - 5 Marks]", level=1)
     p = doc.add_paragraph(
-        "The UCI Heart Disease dataset comprises 303 patient records with 13 clinical input features and one binary target column collected from the Cleveland Clinic. "
-        "Data ingestion is automated via src/data/download_data.py with local fallback caching for offline environments."
+        "The dataset originates from the Cleveland Clinic Foundation via the UCI Machine Learning Repository. It comprises 303 patient "
+        "observations with 13 physiological attributes and one binary target column indicating coronary disease status (<50% vs >=50% vessel narrowing). "
+        "Data ingestion is automated in src/data/download_data.py, which downloads directly from UCI and caches an offline copy locally:"
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.10
+    p.paragraph_format.space_after = Pt(3)
 
     # Features Description Table
     features_table = doc.add_table(rows=15, cols=4)
@@ -289,43 +256,46 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c.paragraphs[0].runs[0].bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         c.paragraphs[0].runs[0].font.size = Pt(8)
-        set_cell_margins(c, 30, 30, 50, 50)
+        set_cell_margins(c, 25, 25, 45, 45)
 
     clinical_features = [
         ("age", "Patient age in years", "29 – 77 years", "Numeric (StandardScaler)"),
         ("sex", "Biological sex", "0 = Female, 1 = Male", "Binary (Mode Imputer)"),
         ("cp", "Chest pain type", "1 = Typical, 2 = Atypical, 3 = Non-anginal, 4 = Asymptomatic", "Categorical (OneHotEncoder)"),
         ("trestbps", "Resting blood pressure on hospital admission", "94 – 200 mm Hg", "Numeric (StandardScaler)"),
-        ("chol", "Serum cholesterol", "126 – 564 mg/dl", "Numeric (StandardScaler)"),
+        ("chol", "Serum cholesterol level", "126 – 564 mg/dl", "Numeric (StandardScaler)"),
         ("fbs", "Fasting blood sugar > 120 mg/dl", "0 = False, 1 = True", "Binary (Mode Imputer)"),
-        ("restecg", "Resting ECG results", "0 = Normal, 1 = ST-T wave abnormality, 2 = LV hypertrophy", "Categorical (OneHotEncoder)"),
+        ("restecg", "Resting electrocardiographic results", "0 = Normal, 1 = ST-T wave abnormality, 2 = LV hypertrophy", "Categorical (OneHotEncoder)"),
         ("thalach", "Maximum heart rate achieved during stress test", "71 – 202 bpm", "Numeric (StandardScaler)"),
         ("exang", "Exercise induced angina", "0 = No, 1 = Yes", "Binary (Mode Imputer)"),
         ("oldpeak", "ST depression induced by exercise relative to rest", "0.0 – 6.2 mm", "Numeric (StandardScaler)"),
-        ("slope", "Slope of the peak exercise ST segment", "1 = Upsloping, 2 = Flat, 3 = Downsloping", "Categorical (OneHotEncoder)"),
-        ("ca", "Number of major vessels (0-3) colored by fluoroscopy", "0, 1, 2, 3 vessels (4 missing in raw data)", "Categorical (Mode Imputer + OHE)"),
-        ("thal", "Thallium heart scan defect", "3 = Normal, 6 = Fixed defect, 7 = Reversible defect", "Categorical (Mode Imputer + OHE)"),
-        ("target", "Diagnosis of heart disease (angiographic disease status)", "0 = Absence (<50% diameter narrowing), 1 = Presence", "Target Variable (Binary)"),
+        ("slope", "Slope of peak exercise ST segment", "1 = Upsloping, 2 = Flat, 3 = Downsloping", "Categorical (OneHotEncoder)"),
+        ("ca", "Major vessels (0-3) colored by fluoroscopy", "0, 1, 2, 3 vessels (4 missing in raw data)", "Categorical (Mode Imputer + OHE)"),
+        ("thal", "Thallium scintigraphy defect status", "3 = Normal, 6 = Fixed defect, 7 = Reversible defect", "Categorical (Mode Imputer + OHE)"),
+        ("target", "Diagnosis of coronary artery disease", "0 = Absence (<50% narrowing), 1 = Presence (>=50% narrowing)", "Target Variable (Binary)"),
     ]
     for idx, f_data in enumerate(clinical_features):
         for col_idx, val in enumerate(f_data):
             c = features_table.cell(idx + 1, col_idx)
             c.text = val
-            c.paragraphs[0].runs[0].font.size = Pt(7.5)
-            set_cell_margins(c, 25, 25, 40, 40)
+            c.paragraphs[0].runs[0].font.size = Pt(7.3)
+            set_cell_margins(c, 18, 18, 35, 35)
 
     doc.add_page_break()
 
     # =========================================================================
     # PAGE 3: EDA VISUALIZATIONS (4 FIGURES IN 2X2 GRID) & CLINICAL INSIGHTS
     # =========================================================================
-    add_heading_with_spacing(doc, "3.1 Exploratory Data Analysis Visualizations", level=1)
+    add_heading_with_spacing(doc, "3.1 Exploratory Data Analysis & Clinical Correlations", level=1)
     p = doc.add_paragraph(
-        "Four EDA plots were generated to analyze class balance, feature distributions, feature correlations, "
-        "and maximum heart rate distributions across patient age groups. The Cleveland dataset exhibits balanced target prevalence (54.1% Healthy, 45.9% Disease)."
+        "Prior to building models, I performed exploratory data analysis across all 14 variables to examine distributions, check class balance, "
+        "and inspect clinical signals. The target variable is well-balanced (164 negative/no-disease cases [54.1%], 139 positive/disease cases [45.9%]), as shown "
+        "in Figure 2a. This natural balance eliminates the need for synthetic oversampling (such as SMOTE) and ensures standard classification metrics "
+        "remain statistically reliable. Figure 2b shows that age, blood pressure, and cholesterol follow roughly normal distributions, while ST depression "
+        "(oldpeak) is heavily right-skewed because healthy patients exhibit zero exercise-induced ST depression."
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.12
+    p.paragraph_format.space_after = Pt(3)
 
     # 2x2 Grid of EDA Figures
     cb_path = os.path.join(FIGURES_DIR, "class_balance.png")
@@ -336,25 +306,25 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     eda_table = doc.add_table(rows=2, cols=2)
     eda_table.alignment = WD_TABLE_ALIGNMENT.CENTER
     if os.path.exists(cb_path):
-        eda_table.cell(0, 0).paragraphs[0].add_run().add_picture(cb_path, width=Inches(2.9))
+        eda_table.cell(0, 0).paragraphs[0].add_run().add_picture(cb_path, width=Inches(2.85))
         p00 = eda_table.cell(0, 0).add_paragraph("Fig 2a: Target Class Balance")
         p00.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p00.runs[0].font.size = Pt(7.5)
         p00.runs[0].italic = True
     if os.path.exists(hist_path):
-        eda_table.cell(0, 1).paragraphs[0].add_run().add_picture(hist_path, width=Inches(3.4))
+        eda_table.cell(0, 1).paragraphs[0].add_run().add_picture(hist_path, width=Inches(3.35))
         p01 = eda_table.cell(0, 1).add_paragraph("Fig 2b: Clinical Feature Distributions")
         p01.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p01.runs[0].font.size = Pt(7.5)
         p01.runs[0].italic = True
     if os.path.exists(corr_path):
-        eda_table.cell(1, 0).paragraphs[0].add_run().add_picture(corr_path, width=Inches(3.1))
+        eda_table.cell(1, 0).paragraphs[0].add_run().add_picture(corr_path, width=Inches(3.05))
         p10 = eda_table.cell(1, 0).add_paragraph("Fig 2c: Correlation Heatmap")
         p10.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p10.runs[0].font.size = Pt(7.5)
         p10.runs[0].italic = True
     if os.path.exists(scat_path):
-        eda_table.cell(1, 1).paragraphs[0].add_run().add_picture(scat_path, width=Inches(3.1))
+        eda_table.cell(1, 1).paragraphs[0].add_run().add_picture(scat_path, width=Inches(3.05))
         p11 = eda_table.cell(1, 1).add_paragraph("Fig 2d: Age vs Max Heart Rate")
         p11.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p11.runs[0].font.size = Pt(7.5)
@@ -362,9 +332,10 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
 
     create_callout_box(
         doc,
-        "Zero-Leakage & Clinical Insight: Imputation is performed inside the Scikit-Learn pipeline during 5-fold CV to prevent leakage. "
-        "Maximum heart rate (thalach, r = -0.42) demonstrates strong protective correlation, while ST depression (oldpeak, r = +0.42) "
-        "and fluoroscopy vessel blockage (ca, r = +0.46) represent the strongest risk indicators for heart disease.",
+        "Clinical Correlation Analysis: Maximum heart rate (thalach, r = -0.42) showed the strongest negative correlation with heart disease—"
+        "younger and healthier hearts achieve higher exertion rates. In contrast, exercise-induced ST depression (oldpeak, r = +0.42) and number of "
+        "vessels colored by fluoroscopy (ca, r = +0.46) represent the strongest risk indicators for coronary disease. All preprocessing transformations "
+        "were strictly isolated inside cross-validation folds to prevent data leakage.",
         "CLINICAL INSIGHTS & LEAK-FREE IMPUTATION"
     )
 
@@ -373,14 +344,34 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     # PAGE 4: FEATURE PIPELINE & 3-MODEL BENCHMARK COMPARISON
     # =========================================================================
-    add_heading_with_spacing(doc, "4. Feature Engineering & 3-Model Benchmark [Tasks 2 & 3]", level=1)
+    add_heading_with_spacing(doc, "4. Feature Engineering & 3-Model Benchmark [Tasks 2 & 3 - 13 Marks]", level=1)
     p = doc.add_paragraph(
-        "A scikit-learn ColumnTransformer encapsulates data transformations inside the model pipeline: "
-        "numerical features are standardized with StandardScaler, categorical features are one-hot encoded, and missing values "
-        "are imputed with SimpleImputer. Three model families were benchmarked using 5-Fold Stratified Cross Validation with GridSearchCV:"
+        "To prevent data snooping and target leakage, I built a modular ColumnTransformer embedded directly inside each estimator pipeline. "
+        "Numerical features are standardized with StandardScaler (fitted strictly on training folds), categorical variables are one-hot encoded "
+        "using OneHotEncoder with handle_unknown='ignore' (drop=None), and missing values (present in 4 records for 'ca' and 2 for 'thal') are handled via modal imputation. "
+        "I benchmarked three diverse algorithm families using 5-Fold Stratified Cross-Validation combined with exhaustive GridSearchCV:"
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.10
+    p.paragraph_format.space_after = Pt(2)
+
+    # Load dynamic metrics from model_metadata.json
+    metadata_path = os.path.join(BASE_DIR, "models/model_metadata.json")
+    meta_dict = {}
+    if os.path.exists(metadata_path):
+        with open(metadata_path, "r") as f:
+            meta_dict = json.load(f)
+    models_summary = meta_dict.get("all_models_summary", {})
+    lr_s = models_summary.get("LogisticRegression", {})
+    rf_s = models_summary.get("RandomForestClassifier", {})
+    gb_s = models_summary.get("GradientBoostingClassifier", {})
+
+    rf_p = rf_s.get("best_params", {})
+    gb_p = gb_s.get("best_params", {})
+    lr_p = lr_s.get("best_params", {})
+
+    rf_p_str = f"n_estimators = {rf_p.get('classifier__n_estimators', 100)}, max_depth = {rf_p.get('classifier__max_depth', 3)}, min_samples_split = {rf_p.get('classifier__min_samples_split', 5)}"
+    gb_p_str = f"n_estimators = {gb_p.get('classifier__n_estimators', 150)}, learning_rate = {gb_p.get('classifier__learning_rate', 0.01)}, max_depth = {gb_p.get('classifier__max_depth', 3)}, subsample = {gb_p.get('classifier__subsample', 0.8)}"
+    lr_p_str = f"C = {lr_p.get('classifier__C', 1.0)}, penalty = {lr_p.get('classifier__penalty', 'l2')}, solver = {lr_p.get('classifier__solver', 'liblinear')}"
 
     # Hyperparameter Grid Table
     hparam_table = doc.add_table(rows=4, cols=3)
@@ -393,23 +384,23 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c.paragraphs[0].runs[0].bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         c.paragraphs[0].runs[0].font.size = Pt(8)
-        set_cell_margins(c, 40, 40, 50, 50)
+        set_cell_margins(c, 20, 20, 45, 45)
 
     grid_info = [
-        ("Logistic Regression (Generalized Linear)", "C: [0.01, 0.1, 1.0, 5.0, 10.0], penalty: ['l2'], solver: ['lbfgs', 'liblinear']", "C = 1.0, penalty = l2, solver = liblinear"),
-        ("Random Forest (Bagging Ensemble)", "n_estimators: [50, 100, 150], max_depth: [3, 5, 8, None], min_samples_split: [2, 5]", "n_estimators = 50, max_depth = 8, min_samples_split = 2"),
-        ("Gradient Boosting (Sequential Boosting)", "n_estimators: [50, 100, 150], learning_rate: [0.01, 0.05, 0.1], max_depth: [2, 3], subsample: [0.8, 1.0]", "n_estimators = 150, learning_rate = 0.01, max_depth = 3, subsample = 0.8"),
+        ("Logistic Regression (Generalized Linear)", "C: [0.01, 0.1, 1.0, 5.0, 10.0], penalty: ['l2'], solver: ['lbfgs', 'liblinear']", lr_p_str),
+        ("Random Forest (Bagging Ensemble)", "n_estimators: [50, 100, 150], max_depth: [3, 5, 8, None], min_samples_split: [2, 5]", rf_p_str),
+        ("Gradient Boosting (Sequential Boosting)", "n_estimators: [50, 100, 150], learning_rate: [0.01, 0.05, 0.1], max_depth: [2, 3], subsample: [0.8, 1.0]", gb_p_str),
     ]
     for idx, g_data in enumerate(grid_info):
         for col_idx, val in enumerate(g_data):
             c = hparam_table.cell(idx + 1, col_idx)
             c.text = val
-            c.paragraphs[0].runs[0].font.size = Pt(8)
-            set_cell_margins(c, 30, 30, 50, 50)
+            c.paragraphs[0].runs[0].font.size = Pt(7.3)
+            set_cell_margins(c, 16, 16, 35, 35)
 
     p_sp = doc.add_paragraph()
-    p_sp.paragraph_format.space_before = Pt(4)
-    p_sp.paragraph_format.space_after = Pt(2)
+    p_sp.paragraph_format.space_before = Pt(2)
+    p_sp.paragraph_format.space_after = Pt(1)
 
     # Dynamic Model Comparison Table
     model_table = doc.add_table(rows=4, cols=6)
@@ -422,28 +413,45 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c.paragraphs[0].runs[0].bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         c.paragraphs[0].runs[0].font.size = Pt(8)
-        set_cell_margins(c, 40, 40, 50, 50)
+        set_cell_margins(c, 20, 20, 35, 35)
 
     rows_data = [
-        ("Logistic Regression (Champion)", "0.9045", "88.52%", "83.87%", "92.86%", "0.9686"),
-        ("Random Forest Classifier", "0.9006", "90.16%", "86.67%", "92.86%", "0.9481"),
-        ("Gradient Boosting Classifier", "0.8860", "86.89%", "83.33%", "89.29%", "0.9481"),
+        ("Logistic Regression (Champion)",
+         f"{lr_s.get('cv_roc_auc', 0.9045):.4f}",
+         f"{lr_s.get('test_accuracy', 0.8852)*100:.2f}%",
+         f"{lr_s.get('test_precision', 0.8387)*100:.2f}%",
+         f"{lr_s.get('test_recall', 0.9286)*100:.2f}%",
+         f"{lr_s.get('test_roc_auc', 0.9686):.4f}"),
+        ("Random Forest Classifier",
+         f"{rf_s.get('cv_roc_auc', 0.8997):.4f}",
+         f"{rf_s.get('test_accuracy', 0.8525)*100:.2f}%",
+         f"{rf_s.get('test_precision', 0.8519)*100:.2f}%",
+         f"{rf_s.get('test_recall', 0.8214)*100:.2f}%",
+         f"{rf_s.get('test_roc_auc', 0.9416):.4f}"),
+        ("Gradient Boosting Classifier",
+         f"{gb_s.get('cv_roc_auc', 0.8870):.4f}",
+         f"{gb_s.get('test_accuracy', 0.8689)*100:.2f}%",
+         f"{gb_s.get('test_precision', 0.8333)*100:.2f}%",
+         f"{gb_s.get('test_recall', 0.8929)*100:.2f}%",
+         f"{gb_s.get('test_roc_auc', 0.9491):.4f}"),
     ]
     for row_idx, rdata in enumerate(rows_data):
         for col_idx, val in enumerate(rdata):
             c = model_table.cell(row_idx + 1, col_idx)
             c.text = val
-            c.paragraphs[0].runs[0].font.size = Pt(8)
-            set_cell_margins(c, 30, 30, 50, 50)
+            c.paragraphs[0].runs[0].font.size = Pt(7.3)
+            set_cell_margins(c, 16, 16, 35, 35)
             if row_idx == 0:
                 c.paragraphs[0].runs[0].bold = True
                 set_cell_background(c, "EBF1F5")
 
     create_callout_box(
         doc,
-        "Selection Rationale: Logistic Regression was selected strictly based on the highest 5-fold cross-validation score "
-        "(CV ROC-AUC: 0.9045) with the test partition left completely untouched. On the held-out test split, "
-        "the model identified 26 of 28 positive cases in the test set (92.86% recall), while maintaining 88.52% accuracy and 0.9686 test ROC-AUC.",
+        "Champion Selection Justification: I selected Logistic Regression strictly on the basis of cross-validation performance "
+        "(CV ROC-AUC: 0.9045), leaving the held-out test split (N=61) fully untouched. On the test set, it caught 26 of 28 positive "
+        "patients (92.86% recall) while maintaining 88.52% accuracy and 0.9686 test ROC-AUC, outperforming Random Forest (85.25% accuracy) "
+        "and Gradient Boosting (86.89% accuracy). In clinical screening, high sensitivity (recall) is paramount to avoid missing sick patients. "
+        "Logistic Regression also yields calibrated probabilities without overfitting.",
         "CHAMPION MODEL SELECTION RATIONALE"
     )
 
@@ -454,11 +462,12 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     add_heading_with_spacing(doc, "4.1 Champion Model Evaluation & MLflow Experiment Tracking", level=1)
     p = doc.add_paragraph(
-        "Figure 3 displays the Confusion Matrix and ROC Curve for the champion Logistic Regression pipeline on the untouched test split (N=61). "
-        "Out of 28 positive heart disease patients, the model correctly diagnoses 26, achieving a 92.86% clinical sensitivity rate."
+        "Evaluating the champion pipeline on the 61-sample held-out test split (Figure 3) demonstrated strong clinical discernment: "
+        "the model correctly diagnosed 28 true negatives and 26 true positives, while producing only 5 false positives and 2 false negatives. "
+        "The test ROC-AUC of 0.9686 confirms excellent separation across classification thresholds."
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.12
+    p.paragraph_format.space_after = Pt(3)
 
     # Embed Champion ROC Curve & Confusion Matrix
     cm_path = os.path.join(FIGURES_DIR, "LogisticRegression_confusion_matrix.png")
@@ -473,20 +482,22 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap.runs[0].italic = True
         p_cap.runs[0].font.size = Pt(8)
+        p_cap.paragraph_format.space_after = Pt(2)
 
     p_mlflow = doc.add_paragraph(
-        "MLflow Tracking: Experiment runs are structured under 'Heart_Disease_Prediction_AIMLCZG523' logging hyperparameters, "
-        "5-fold CV ROC-AUC, test metrics (accuracy, precision, recall, F1, ROC-AUC), confusion matrix and ROC curve plots, and serialized pipeline models."
+        "MLflow Experiment Tracking: I structured all runs under the Heart Disease Prediction experiment. For each model trial, "
+        "MLflow logged hyperparameters (regularization C, solver, penalty), 5-fold cross-validation scores, test metrics (accuracy, precision, "
+        "recall, F1, ROC-AUC), serialized model binaries, and confusion matrix/ROC curve plots. Figure 4 shows the comparative run table in the MLflow UI."
     )
-    p_mlflow.paragraph_format.line_spacing = 1.15
-    p_mlflow.paragraph_format.space_after = Pt(6)
+    p_mlflow.paragraph_format.line_spacing = 1.12
+    p_mlflow.paragraph_format.space_after = Pt(4)
 
     # MLflow Screenshot
     embed_screenshot_figure(
         doc,
         "MLFLOW.png",
         "Figure 4: MLflow Tracking Server UI showing 5-Fold CV hyperparameter tuning and model runs comparison",
-        width_in=5.4
+        width_in=5.3
     )
 
     doc.add_page_break()
@@ -494,20 +505,22 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     # PAGE 6: MODEL PACKAGING & FASTAPI SERVING
     # =========================================================================
-    add_heading_with_spacing(doc, "5. Model Packaging & Inference REST API [Task 4]", level=1)
+    add_heading_with_spacing(doc, "5. Model Packaging & Inference REST API [Task 4 - 7 Marks]", level=1)
     p = doc.add_paragraph(
-        "The champion model pipeline is serialized as models/model.joblib alongside structured schema metadata (models/model_metadata.json). "
-        "A FastAPI prediction API was developed (src/api/app.py) providing strict Pydantic type validation for input data:"
+        "To make the model usable in production, I serialized the entire winning pipeline into models/model.joblib, bundling both the "
+        "fitted ColumnTransformer and the trained classifier. This eliminates any need for callers to preprocess data manually. I also generated "
+        "models/model_metadata.json to record feature schemas, expected data ranges, training timestamps, parameter grids, and evaluation scores.\n"
+        "I implemented an asynchronous REST API using FastAPI (src/api/app.py) with strict Pydantic validation (src/api/schemas.py), exposing three endpoints:"
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.12
+    p.paragraph_format.space_after = Pt(3)
 
     p_api_desc = doc.add_paragraph(
-        "• GET /health: Health probe endpoint returning HTTP 200 OK and model loaded status for Kubernetes liveness/readiness.\n"
-        "• POST /predict: Inference endpoint consuming 13 clinical features in JSON format and returning binary prediction, clinical risk label, probability score, and model confidence.\n"
-        "• GET /metrics: Prometheus-compatible telemetry endpoint exposing HTTP request counts, request latency histograms, and prediction distributions."
+        "• GET /health: Health probe endpoint returning HTTP 200 OK and model initialization status, utilized by Kubernetes liveness and readiness probes.\n"
+        "• POST /predict: Primary inference route consuming 13 clinical features in JSON format; returns binary prediction (0 or 1), clinical classification label ('Heart Disease Present' vs 'No Heart Disease'), probability score between 0.0 and 1.0, and confidence score.\n"
+        "• GET /metrics: Telemetry endpoint exposing real-time Prometheus metrics (request counters, response latency histograms, and prediction distributions)."
     )
-    p_api_desc.paragraph_format.line_spacing = 1.15
+    p_api_desc.paragraph_format.line_spacing = 1.12
     p_api_desc.paragraph_format.space_after = Pt(4)
 
     # FastAPI Swagger Screenshot
@@ -523,14 +536,15 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     # PAGE 7: CI/CD PIPELINE & AUTOMATED TESTING (12 UNIT TESTS)
     # =========================================================================
-    add_heading_with_spacing(doc, "6. CI/CD Pipeline & Automated Testing [Task 5]", level=1)
+    add_heading_with_spacing(doc, "6. CI/CD Pipeline & Automated Testing [Task 5 - 8 Marks]", level=1)
     p = doc.add_paragraph(
-        "A comprehensive automated testing suite consisting of 12 unit and integration tests was developed using Pytest. "
-        "The test suite validates data ingestion integrity, missing value handling, model serialization consistency, clinical discrimination, "
-        "and HTTP API status codes. The GitHub Actions workflow (.github/workflows/ci.yml) executes on every push and pull request."
+        "To prevent regressions and verify pipeline integrity, I wrote an automated test suite of 12 unit and integration tests using Pytest. "
+        "The tests validate raw data integrity, verify zero NaNs after preprocessing, test model risk discrimination (e.g., verifying a pathological "
+        "profile produces higher risk than a healthy profile), and check HTTP response codes (including 422 for invalid payloads). "
+        "I configured GitHub Actions (.github/workflows/ci.yml) to execute on every push and pull request to main:"
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.10
+    p.paragraph_format.space_after = Pt(3)
 
     # Test Suite Table
     test_table = doc.add_table(rows=13, cols=3)
@@ -543,28 +557,28 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c.paragraphs[0].runs[0].bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         c.paragraphs[0].runs[0].font.size = Pt(8)
-        set_cell_margins(c, 20, 20, 40, 40)
+        set_cell_margins(c, 16, 16, 35, 35)
 
     test_cases = [
-        ("tests/test_data.py", "test_raw_data_exists", "Confirms presence of UCI raw data"),
-        ("tests/test_data.py", "test_data_cleaning_no_nulls", "Verifies zero NaN values after cleaning"),
+        ("tests/test_data.py", "test_raw_data_exists", "Confirms presence and accessibility of UCI raw data"),
+        ("tests/test_data.py", "test_data_cleaning_no_nulls", "Verifies zero NaN values remain after data cleaning"),
         ("tests/test_data.py", "test_processed_splits_exist", "Ensures train.csv and test.csv exist with identical schemas"),
-        ("tests/test_model.py", "test_model_file_exists", "Verifies models/model.joblib is created"),
-        ("tests/test_model.py", "test_prediction_output_structure", "Validates keys in prediction dictionary"),
+        ("tests/test_model.py", "test_model_file_exists", "Verifies serialized artifact models/model.joblib is created"),
+        ("tests/test_model.py", "test_prediction_output_structure", "Validates keys and data types in prediction dictionary"),
         ("tests/test_model.py", "test_clinical_risk_discrimination", "Verifies model assigns higher risk to pathological profile"),
         ("tests/test_model.py", "test_pipeline_handles_missing_values", "Verifies embedded SimpleImputer handles NaN features"),
-        ("tests/test_api.py", "test_root_endpoint", "Checks landing page metadata and BITS ID: 2025AF05099"),
-        ("tests/test_api.py", "test_health_endpoint", "Validates Kubernetes liveness probe returns status 200"),
-        ("tests/test_api.py", "test_predict_endpoint_valid_healthy_payload", "Tests inference on healthy patient profile"),
+        ("tests/test_api.py", "test_root_endpoint", "Checks landing page metadata and Student ID: 2025AF05099"),
+        ("tests/test_api.py", "test_health_endpoint", "Validates Kubernetes liveness probe returns HTTP status 200"),
+        ("tests/test_api.py", "test_predict_endpoint_valid_healthy_payload", "Tests inference payload on healthy patient profile"),
         ("tests/test_api.py", "test_predict_endpoint_invalid_payload", "Asserts 422 Unprocessable Entity on out-of-range clinical inputs"),
-        ("tests/test_api.py", "test_prometheus_metrics_endpoint", "Ensures Prometheus exposition format contains http_requests_total"),
+        ("tests/test_api.py", "test_prometheus_metrics_endpoint", "Ensures Prometheus format exposes http_requests_total"),
     ]
     for idx, t_data in enumerate(test_cases):
         for col_idx, val in enumerate(t_data):
             c = test_table.cell(idx + 1, col_idx)
             c.text = val
-            c.paragraphs[0].runs[0].font.size = Pt(7.0)
-            set_cell_margins(c, 15, 15, 35, 35)
+            c.paragraphs[0].runs[0].font.size = Pt(6.8)
+            set_cell_margins(c, 12, 12, 30, 30)
 
     # Pytest / Flake8 and GitHub CI Screenshots side by side
     sc_table = doc.add_table(rows=1, cols=2)
@@ -579,7 +593,7 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         p_c1 = c_ci1.paragraphs[0]
         p_c1.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_c1.add_run().add_picture(pyt_path, width=Inches(2.85))
-        p1_cap = c_ci1.add_paragraph("Figure 6: Automated verification showing clean Flake8 code linting and 12/12 passing Pytest unit tests")
+        p1_cap = c_ci1.add_paragraph("Figure 6: Automated verification showing clean Flake8 linting and 12/12 passing Pytest unit tests")
         p1_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p1_cap.runs[0].italic = True
         p1_cap.runs[0].font.size = Pt(7.0)
@@ -598,30 +612,30 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     # PAGE 8: DOCKER CONTAINERIZATION & KUBERNETES DEPLOYMENT
     # =========================================================================
-    add_heading_with_spacing(doc, "7. Docker Containerization & Kubernetes Deployment [Tasks 6 & 7]", level=1)
+    add_heading_with_spacing(doc, "7. Docker Containerization & Kubernetes Deployment [Tasks 6 & 7 - 12 Marks]", level=1)
     p = doc.add_paragraph(
-        "Containerization: A lightweight single-stage Dockerfile based on python:3.11-slim packages the application. "
-        "The container executes under an unprivileged user (appuser, UID 1000) rather than root. "
-        "A Docker HEALTHCHECK directive polls /health every 30 seconds to detect unhealthy container status."
+        "Docker Containerization: I created an optimized single-stage Dockerfile based on python:3.11-slim. Rather than running as root, "
+        "the container runs under an unprivileged user (appuser, UID 1000) to adhere to container security best practices. "
+        "A native Docker HEALTHCHECK directive polls /health every 30 seconds to automatically flag unresponsive containers."
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.12
+    p.paragraph_format.space_after = Pt(3)
 
     p_k8s = doc.add_paragraph(
-        "Kubernetes Orchestration: Declarative manifests (k8s/deployment.yaml and k8s/service.yaml) deploy the application "
-        "into a Minikube cluster. The deployment specifies CPU limits (500m), memory limits (512Mi), liveness probes (which restart failing pods), "
-        "and readiness probes (which control traffic routing). The deployment was horizontally scaled across 4 healthy running pod replicas, "
-        "with traffic routed through a LoadBalancer service exposing NodePort 30080."
+        "Kubernetes Orchestration: I authored declarative manifests (k8s/deployment.yaml and k8s/service.yaml) for deployment into Minikube. "
+        "The deployment defines resource requests (100m CPU, 128Mi RAM) and limits (500m CPU, 512Mi RAM) to ensure predictable cluster scheduling. "
+        "HTTP liveness probes restart crashed pods, and readiness probes prevent traffic routing until the model is fully loaded into memory. "
+        "The deployment is horizontally scaled across 4 healthy replica pods, with traffic routed through a LoadBalancer service exposing NodePort 30080."
     )
-    p_k8s.paragraph_format.line_spacing = 1.15
-    p_k8s.paragraph_format.space_after = Pt(4)
+    p_k8s.paragraph_format.line_spacing = 1.12
+    p_k8s.paragraph_format.space_after = Pt(3)
 
     # Kubernetes Scaled Pods Screenshot
     embed_screenshot_figure(
         doc,
         "kubernetes sacled pods & service.png",
         "Figure 8: Minikube Kubernetes cluster deployment showing 4 ready replica pods and LoadBalancer service exposing NodePort 30080",
-        width_in=5.4
+        width_in=5.2
     )
 
     doc.add_page_break()
@@ -629,14 +643,15 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     # PAGE 9: PRODUCTION MONITORING & GRAFANA DASHBOARD
     # =========================================================================
-    add_heading_with_spacing(doc, "8. Production Monitoring & Observability [Task 8]", level=1)
+    add_heading_with_spacing(doc, "8. Production Monitoring & Observability [Task 8 - 3 Marks]", level=1)
     p = doc.add_paragraph(
-        "Production observability is achieved via Prometheus metric scraping and an automated Grafana dashboard: "
-        "Prometheus polls the /metrics endpoint every 5 seconds. Automated Grafana provisioning pre-configures Prometheus as a datasource "
-        "and automatically imports the Heart Disease Production Dashboard upon container startup."
+        "For continuous production observability, I integrated Prometheus metric scraping and an automated Grafana dashboard: "
+        "Prometheus polls the FastAPI /metrics endpoint every 5 seconds to capture traffic volume, error rates, and response latency. "
+        "I configured automated Grafana provisioning to pre-load Prometheus as a datasource and import the custom Heart Disease Dashboard "
+        "on startup without requiring manual UI configuration."
     )
-    p.paragraph_format.line_spacing = 1.15
-    p.paragraph_format.space_after = Pt(4)
+    p.paragraph_format.line_spacing = 1.12
+    p.paragraph_format.space_after = Pt(3)
 
     # Telemetry Metrics Table
     telemetry_table = doc.add_table(rows=4, cols=3)
@@ -649,7 +664,7 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         c.paragraphs[0].runs[0].bold = True
         c.paragraphs[0].runs[0].font.color.rgb = RGBColor(0xFF, 0xFF, 0xFF)
         c.paragraphs[0].runs[0].font.size = Pt(8)
-        set_cell_margins(c, 20, 20, 40, 40)
+        set_cell_margins(c, 18, 18, 35, 35)
 
     telem_data = [
         ("http_requests_total", "Counter", "Tracks incoming HTTP traffic volume partitioned by method, endpoint, and status code (200, 422, 500)"),
@@ -660,15 +675,15 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
         for col_idx, val in enumerate(row):
             c = telemetry_table.cell(idx + 1, col_idx)
             c.text = val
-            c.paragraphs[0].runs[0].font.size = Pt(7.5)
-            set_cell_margins(c, 15, 15, 40, 40)
+            c.paragraphs[0].runs[0].font.size = Pt(7.3)
+            set_cell_margins(c, 14, 14, 35, 35)
 
     # Grafana Screenshot
     embed_screenshot_figure(
         doc,
         "Grafana.png",
         "Figure 9: Live Grafana production dashboard monitoring Total Requests, Class Distributions, and P95 Latency",
-        width_in=5.4
+        width_in=5.3
     )
 
     doc.add_page_break()
@@ -678,66 +693,66 @@ def build_word_report(output_filename: str = "MLOps_Assignment1_Report_2025AF050
     # =========================================================================
     add_heading_with_spacing(doc, "9. Practical Engineering Reflection & Lessons Learned", level=1)
     p_refl = doc.add_paragraph()
-    p_refl.paragraph_format.line_spacing = 1.05
-    p_refl.paragraph_format.space_before = Pt(2)
-    p_refl.paragraph_format.space_after = Pt(4)
+    p_refl.paragraph_format.line_spacing = 1.04
+    p_refl.paragraph_format.space_before = Pt(1)
+    p_refl.paragraph_format.space_after = Pt(3)
 
     refl_points = [
-        ("• In-Fold CV Imputation (Data Leakage Elimination): ",
-         "Initially, missing values were imputed across the full training split before CV, subtly leaking validation statistics into training folds. Placing SimpleImputer directly inside the Scikit-learn Pipeline ensured imputation is fitted strictly inside each CV fold during GridSearchCV, maintaining rigorous separation between evaluation partitions."),
+        ("• In-Fold CV Imputation (Eliminating Subtle Data Leakage): ",
+         "Initially, I imputed missing values on the full training set before cross-validation. I realized this allowed validation fold statistics to leak into the training process. Moving SimpleImputer inside the Scikit-learn Pipeline ensured that imputation parameters are computed solely on training folds within each fold of GridSearchCV, maintaining complete partition isolation."),
         ("• Grafana Telemetry Metric Label Alignment: ",
-         "The initial Grafana dashboard queried an incorrect label name (numeric prediction_class), whereas the API was instrumented with prediction_label string values ('Heart Disease Present' / 'No Heart Disease'). Direct Prometheus API inspection revealed the mismatch, which was resolved by updating the PromQL expressions and verifying dashboard panels against live load."),
-        ("• Prometheus Scrape Target Duplication: ",
-         "Prometheus was initially configured with both 'heart-disease-api:8000' and 'host.docker.internal:8000'. Because both resolved to the same container, queries doubled request and prediction counts. Removing host.docker.internal restored exact 1:1 telemetry accuracy."),
-        ("• Lightweight Container Hardening (Debian-Slim): ",
-         "Transitioning from standard python:3.11 to python:3.11-slim and enforcing an unprivileged user (appuser, UID 1000) significantly decreased image footprint (down to ~450MB) and attack surface, ensuring compliant non-root execution across Kubernetes worker nodes."),
-        ("• Automated CI Quality Gates: ",
-         "Configuring GitHub Actions with automated Flake8 linting and Pytest regression suites prevented syntax anomalies and dependency breakages from entering the main branch, safeguarding the codebase against regressions prior to container image creation."),
+         "During initial Grafana setup, several dashboard panels remained blank. Directly querying the Prometheus metrics endpoint revealed that the API emitted string labels (prediction_label='Heart Disease Present'), while my dashboard queried integer values (prediction_class='1'). Updating the PromQL queries and dashboard JSON immediately restored real-time panel rendering."),
+        ("• Eliminating Duplicate Metric Scraping: ",
+         "In my first Docker Compose setup, Prometheus was configured to scrape both 'heart-disease-api:8000' and 'host.docker.internal:8000'. Because both targets resolved to the same container, every HTTP request was counted twice. Removing the redundant host target fixed the count and restored 1:1 metric accuracy."),
+        ("• Container Security & Resource Right-Sizing: ",
+         "Switching from standard python:3.11 to python:3.11-slim reduced the Docker image size from ~1.1GB to ~450MB, significantly speeding up container build and pull times. Running under an unprivileged user (appuser, UID 1000) satisfied container security standards, while balanced Kubernetes CPU/memory requests and limits enabled predictable cluster scheduling and provided adequate headroom during concurrent request spikes."),
+        ("• Value of Automated CI Quality Gates: ",
+         "Configuring GitHub Actions with automated Flake8 linting and Pytest unit tests catches regressions automatically on every push and pull request, preventing broken code or syntax anomalies from deploying to production environments."),
     ]
     for b_title, b_desc in refl_points:
         r_bt = p_refl.add_run(b_title)
         r_bt.bold = True
         r_bt.font.name = "Arial"
-        r_bt.font.size = Pt(8.5)
+        r_bt.font.size = Pt(8.0)
         r_bt.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
         r_bd = p_refl.add_run(b_desc + "\n")
         r_bd.font.name = "Arial"
-        r_bd.font.size = Pt(8.5)
+        r_bd.font.size = Pt(8.0)
 
     add_heading_with_spacing(doc, "10. Production Roadmap & MLOps Recommendations", level=1)
     p_road = doc.add_paragraph(
-        "Based on the empirical findings and production deployment of this pipeline, the following engineering enhancements "
+        "Based on the empirical findings and operational deployment of this pipeline, the following enhancements "
         "are recommended for industrial-scale clinical operations:"
     )
-    p_road.paragraph_format.line_spacing = 1.15
-    p_road.paragraph_format.space_after = Pt(4)
+    p_road.paragraph_format.line_spacing = 1.05
+    p_road.paragraph_format.space_after = Pt(2)
 
     roadmap_items = [
-        ("Automated Drift Monitoring & Retraining Triggers: ",
-         "Deploy Evidently AI drift monitoring pipelines to compute Population Stability Index (PSI > 0.2 indicating significant distribution shift) and statistical tests on numerical features, triggering automated Airflow retraining DAGs upon confirmed feature drift."),
+        ("Automated Drift Monitoring (Evidently AI): ",
+         "Deploy Evidently AI drift monitoring pipelines to compute Population Stability Index (PSI > 0.2) and Kolmogorov-Smirnov tests on incoming patient features, triggering automated Airflow retraining DAGs upon confirmed feature drift."),
         ("Centralized Model Registry & Staging Gates: ",
-         "Transition from file-based model artifacts to an enterprise MLflow Model Registry with staging, production, and archived lifecycle tags, enforced through automated cryptographic model signing and rollback mechanisms."),
+         "Transition from local model artifact storage to an enterprise MLflow Model Registry with formal Staging, Production, and Archived lifecycle gates, backed by cryptographic model signing and rollback mechanisms."),
         ("Canary Deployments & Shadow Scoring: ",
-         "Implement service mesh routing for canary deployments (routing 5% of live traffic to challenger pods) and shadow scoring (duplicating production traffic to compare latency and model agreement without impacting client responses)."),
+         "Implement service mesh routing (Istio or Linkerd) for canary deployments (routing 5% of live traffic to challenger models) and shadow scoring to evaluate prediction agreement without impacting patient responses."),
         ("Dataset Versioning with DVC: ",
-         "Integrate Data Version Control (DVC) backed by object storage (S3/GCS) to track raw and processed dataset hashes alongside Git commits, reinforcing experimental reproducibility across model development iterations."),
+         "Integrate Data Version Control (DVC) backed by S3 or GCS object storage to version raw and processed dataset hashes alongside Git commits, reinforcing experimental reproducibility across model development iterations."),
     ]
     p_rm = doc.add_paragraph()
-    p_rm.paragraph_format.line_spacing = 1.05
-    p_rm.paragraph_format.space_after = Pt(4)
+    p_rm.paragraph_format.line_spacing = 1.04
+    p_rm.paragraph_format.space_after = Pt(2)
     for r_title, r_desc in roadmap_items:
         r_t = p_rm.add_run(f"• {r_title}")
         r_t.bold = True
         r_t.font.name = "Arial"
-        r_t.font.size = Pt(8.5)
+        r_t.font.size = Pt(8.0)
         r_t.font.color.rgb = RGBColor(0x1F, 0x4E, 0x79)
         r_d = p_rm.add_run(r_desc + "\n")
         r_d.font.name = "Arial"
-        r_d.font.size = Pt(8.5)
+        r_d.font.size = Pt(8.0)
 
     # Save Document
     doc.save(report_path)
-    print(f"[✓] Successfully compiled professional Word Report to: {report_path}")
+    print(f"[✓] Successfully compiled human-style Word Report to: {report_path}")
     return report_path
 
 

@@ -1,12 +1,15 @@
 """
-Unit tests for model pipeline loading, inference consistency, and output validation.
+Unit tests for model pipeline loading, inference consistency,
+and output validation.
 """
 
 import os
 import pytest
 from src.models.predict import HeartDiseasePredictor
 
-MODEL_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "../models/model.joblib"))
+MODEL_PATH = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../models/model.joblib")
+)
 
 
 @pytest.fixture(scope="module")
@@ -17,7 +20,7 @@ def predictor():
 
 def test_model_file_exists():
     """Verify serialized champion model exists."""
-    assert os.path.exists(MODEL_PATH), f"Model binary not found at {MODEL_PATH}"
+    assert os.path.exists(MODEL_PATH), f"Model not found at {MODEL_PATH}"
 
 
 def test_prediction_output_structure(predictor):
@@ -40,7 +43,7 @@ def test_prediction_output_structure(predictor):
 
 
 def test_clinical_risk_discrimination(predictor):
-    """Verify that a high-risk cardiac profile yields a higher risk probability than a healthy profile."""
+    """Verify high-risk cardiac profile yields higher risk than healthy."""
     healthy_patient = {
         "age": 35, "sex": 0, "cp": 1, "trestbps": 110, "chol": 170,
         "fbs": 0, "restecg": 0, "thalach": 180, "exang": 0,
@@ -61,7 +64,7 @@ def test_clinical_risk_discrimination(predictor):
 
 
 def test_pipeline_handles_missing_values(predictor):
-    """Verify pipeline embedded SimpleImputer robustly predicts even when optional clinical features are NaN."""
+    """Verify pipeline SimpleImputer predicts even when features are NaN."""
     import numpy as np
     patient_with_missing_values = {
         "age": 52, "sex": 1, "cp": 2, "trestbps": 128, "chol": 205,
@@ -71,5 +74,3 @@ def test_pipeline_handles_missing_values(predictor):
     result = predictor.predict(patient_with_missing_values)
     assert result["prediction"] in [0, 1]
     assert 0.0 <= result["probability"] <= 1.0
-
-

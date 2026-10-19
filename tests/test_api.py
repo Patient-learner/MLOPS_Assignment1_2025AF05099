@@ -55,7 +55,7 @@ def test_predict_endpoint_valid_healthy_payload():
 
 
 def test_predict_endpoint_invalid_payload():
-    """Verify that malformed or out-of-range input triggers a 422 Unprocessable Entity error."""
+    """Verify malformed or out-of-range input triggers a 422 error."""
     # Invalid age (199 > 120) and negative blood pressure
     invalid_payload = {
         "age": 199,
@@ -74,6 +74,23 @@ def test_predict_endpoint_invalid_payload():
     }
     response = client.post("/predict", json=invalid_payload)
     assert response.status_code == 422
+
+    # Invalid fractional vessel count ca=1.5 must trigger 422
+    ca_invalid_payload = {
+        "age": 55, "sex": 1, "cp": 2, "trestbps": 130.0, "chol": 220.0,
+        "fbs": 0, "restecg": 0, "thalach": 150.0, "exang": 0,
+        "oldpeak": 1.0, "slope": 1, "ca": 1.5, "thal": 3.0,
+    }
+    assert client.post("/predict", json=ca_invalid_payload).status_code == 422
+
+    # Invalid thallium category thal=999 must trigger 422
+    thal_invalid_payload = {
+        "age": 55, "sex": 1, "cp": 2, "trestbps": 130.0, "chol": 220.0,
+        "fbs": 0, "restecg": 0, "thalach": 150.0, "exang": 0,
+        "oldpeak": 1.0, "slope": 1, "ca": 0.0, "thal": 999.0,
+    }
+    res = client.post("/predict", json=thal_invalid_payload)
+    assert res.status_code == 422
 
 
 def test_prometheus_metrics_endpoint():

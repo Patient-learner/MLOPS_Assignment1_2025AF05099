@@ -2,7 +2,7 @@
 Pydantic schemas for request validation and response formatting.
 """
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class PatientData(BaseModel):
@@ -17,8 +17,22 @@ class PatientData(BaseModel):
     exang: int = Field(..., ge=0, le=1, description="Exercise induced angina (1 = yes; 0 = no)")
     oldpeak: float = Field(..., ge=0.0, le=10.0, description="ST depression induced by exercise")
     slope: int = Field(..., ge=1, le=3, description="Slope of the peak exercise ST segment (1, 2, 3)")
-    ca: float = Field(..., ge=0.0, le=3.0, description="Number of major vessels colored by flourosopy (0-3)")
-    thal: float = Field(..., description="Thalassemia (3 = normal; 6 = fixed defect; 7 = reversable defect)")
+    ca: float = Field(..., description="Number of major vessels colored by fluoroscopy (0, 1, 2, or 3)")
+    thal: float = Field(..., description="Thalassemia (3 = normal; 6 = fixed defect; 7 = reversible defect)")
+
+    @field_validator("ca")
+    @classmethod
+    def validate_ca(cls, v: float) -> float:
+        if v not in {0.0, 1.0, 2.0, 3.0, 0, 1, 2, 3} or int(v) != v:
+            raise ValueError("ca must be an integer count of major vessels between 0 and 3 (0, 1, 2, 3)")
+        return float(int(v))
+
+    @field_validator("thal")
+    @classmethod
+    def validate_thal(cls, v: float) -> float:
+        if v not in {3.0, 6.0, 7.0, 3, 6, 7} or int(v) != v:
+            raise ValueError("thal must be a valid clinical category: 3 (normal), 6 (fixed defect), or 7 (reversible defect)")
+        return float(int(v))
 
     model_config = {
         "json_schema_extra": {
