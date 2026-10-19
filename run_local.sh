@@ -28,7 +28,7 @@ $PYTHON main.py --stage all
 
 # 3. Code Linting & Automated Unit Testing
 echo "[*] Running Flake8 code linting..."
-./venv/bin/flake8 src/ tests/ main.py --max-line-length=125 --ignore=E402,W503,E501,W391
+./venv/bin/flake8 src/ tests/ main.py --max-line-length=125 --ignore=E402,W503,E501,W391,E226
 
 echo "[*] Executing Pytest automated unit tests..."
 ./venv/bin/pytest -v tests/

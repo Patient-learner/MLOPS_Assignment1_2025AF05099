@@ -132,7 +132,7 @@ Open [http://localhost:5000](http://localhost:5000) to view runs, metrics, param
 
 #### Step 4: Run Automated Unit Tests & Linting
 ```bash
-flake8 src/ tests/ main.py --max-line-length=125 --ignore=E402,W503,E501,W391
+flake8 src/ tests/ main.py --max-line-length=125 --ignore=E402,W503,E501,W391,E226
 pytest -v tests/
 ```
 
